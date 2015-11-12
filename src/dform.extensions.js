@@ -315,4 +315,66 @@
 				}
 			}
 		}, typeof Globalize !== 'undefined' && $.isFunction(Globalize.localize));
+
+		getForm = function (getForm, formName, formMethod) {
+			/**
+			 * @param getForm is the name of the form you want to get
+			 * @param formName is the name attribute the form element will recive
+			 * @param formMethod is the method attribute the form element will recive
+			 */
+
+			$.ajax({
+				url: getForm + '.json',
+				dataType: 'json'
+			})
+			.always(function(chew) {
+				jsonSpit(chew);
+			});
+
+			function jsonSpit (chew) {
+				$('#modal-' + getForm + ' .modal-body').dform({
+					'id' : formName,
+					'name' : formName,
+					'method' : formMethod,
+					'html': chew
+				});
+			};
+		};
+
+		$.dform.subscribe('modal',
+			function(options, type)
+			{
+				var modalContent = '';
+
+				// Get a form via ajax, and put it into the modal
+				// Use the form option to make this happen
+				// If you want to, you can have modal with just normal html content
+				// Just use the content option to put in normal content
+				if (options.form) {
+					getForm(options.form['get'], options.form['name'], options.form['method']);
+				} else {
+					var modalContent = options.content;
+				}
+
+				var modal = '<div class="modal fade" role="dialog">' +
+								'<div class="modal-dialog modal-lg">' +
+									'<div class="modal-content">' +
+										'<div class="modal-header">' +
+											'<button type="button" class="close" data-dismiss="modal">&times;</button>' +
+											'<h4 class="modal-title">' + options.heading + '</h4>' +
+										'</div>' +
+										'<div class="modal-body">' +
+											modalContent +
+										'</div>' +
+										'<div class="modal-footer">' +
+											'<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' +
+										'</div>' +
+									'</div>' +
+								'</div>' +
+							'</div>';
+
+				if(type === 'modalTrigger') {
+					$('body').append($(modal).dform('attr', options));
+				}
+			}, $.isFunction($.fn.modal));
 })(jQuery);
