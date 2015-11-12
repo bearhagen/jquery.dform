@@ -66,6 +66,17 @@
 		{
 			return $("<div>").dform('attr', options);
 		}, $.isFunction($.fn.tabs));
+
+	$.dform.addType('modalTrigger',
+		/**
+		 * Returns an inline button which triggers a Bootstrap modal.
+		 *
+		 * @param options The options as in jQuery UI tab
+		 */
+		function(options)
+		{
+			return $('<button type="button" class="btn btn-inline" data-toggle="modal">').dform('attr', options);
+		}, $.isFunction($.fn.button));
 	
 	$.dform.subscribe("entries",
 		/**
