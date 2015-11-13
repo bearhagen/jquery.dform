@@ -631,8 +631,17 @@
 		 */
 		function(options)
 		{
-			return $('<button type="button" class="btn btn-inline" data-toggle="modal">').dform('attr', options);
+			return $('<button type="button" class="btn btn-info" data-toggle="modal">').dform('attr', options);
 		}, $.isFunction($.fn.button));
+
+	$.dform.addType('modalResult',
+		/**
+		 *
+		 */
+		function(options)
+		{
+			return $('<div class="modal-result">').dform('attr', options);
+		});
 
 	$.dform.addType('header',
 		/**
@@ -670,13 +679,40 @@
 			return $('<p class="sub">').dform('attr', options);
 		});
 
+	$.dform.addType('button',
+		/**
+		 * Set the sub title of the form
+		 */
+		function(options)
+		{
+			return $('<button class="btn">').dform('attr', options);
+		});
+
 	$.dform.addType('text-inline',
 		/**
-		 * Set the logo of the form
+		 *
 		 */
 		function(options)
 		{
 			return $('<div class="form-group"><label for="' + options.input_id + '">' + options.label + '</label><input type="text" id="' + options.input_id + '" class="form-control" placeholder="' + options.label + '"></div>').dform('attr', options);
+		});
+
+	$.dform.addType('mathField',
+		/**
+		 * Math field
+		 */
+		function(options)
+		{
+			return $('<div class="form-group"><label for="' + options.input_id + '">' + options.label + '</label><input type="number" id="' + options.input_id + '" class="form-control mathField" placeholder="' + options.label + '"></div>').dform('attr', options);
+		});
+
+	$.dform.addType('summaryField',
+		/**
+		 * Math field
+		 */
+		function(options)
+		{
+			return $('<div class="form-group"><label for="' + options.input_id + '">' + options.label + '</label><input type="number" id="' + options.input_id + '" class="form-control summaryField" placeholder="' + options.label + '"></div>').dform('attr', options);
 		});
 	
 	$.dform.subscribe("entries",
@@ -937,6 +973,7 @@
 					'id' : formName,
 					'name' : formName,
 					'method' : formMethod,
+					'class' : 'row',
 					'html': chew
 				});
 			};
@@ -968,7 +1005,7 @@
 											modalContent +
 										'</div>' +
 										'<div class="modal-footer">' +
-											'<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' +
+											'<button type="button" class="btn btn-default btn-md btn-primary modal-close" data-dismiss="modal">Lagre</button>' +
 										'</div>' +
 									'</div>' +
 								'</div>' +
@@ -977,5 +1014,52 @@
 				if(type === 'modalTrigger') {
 					$('body').append($(modal).dform('attr', options));
 				}
+
+				var modalId = options.id;
+				var resultElement = modalId.replace('modal', 'result');
+
+				$('#' + modalId).on('click', '.modal-close', function(event) {
+					event.preventDefault();
+
+					if ($('#' + resultElement).length) {
+						$('#' + modalId + ' input').each(function(index, el) {
+							$('#' + resultElement).append('<input type="text" id="' + resultElement + '_' + index + '" value="' + $(el).val() + '" disabled>');
+						});
+					};
+				});
+
 			}, $.isFunction($.fn.modal));
+
+		$.dform.subscribe('icon',
+			function(options, type)
+			{
+				if(type === 'button' || type === 'modalTrigger') {
+					$(this).prepend('<span class="glyphicon glyphicon-' + options + ' left" aria-hidden="true"></span>');
+				}
+			}, $.isFunction($.fn.button));
+
+		$.dform.subscribe('summarize',
+			/*
+			 * 
+			**/
+			function(options, type)
+			{
+				if(type === 'summaryField') {
+					var values = [];
+					var summaryField = $(this).children('input');
+
+					// For every input field given in the summarize option
+					// Summarize the value when any of them change
+					$.each(options, function(index, val) {
+						 $('#' + val).change(function(event) {
+							event.preventDefault();
+							values[index] = parseInt($('#' + val).val());
+
+							var sum = values.reduce(function (previous, current) { return previous + current; }, 0);
+
+							summaryField.val(sum);
+						});
+					});
+				}
+			});
 })(jQuery);
