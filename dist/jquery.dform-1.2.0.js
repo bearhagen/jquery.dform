@@ -628,13 +628,56 @@
 	$.dform.addType('modalTrigger',
 		/**
 		 * Returns an inline button which triggers a Bootstrap modal.
-		 *
-		 * @param options The options as in jQuery UI tab
 		 */
 		function(options)
 		{
 			return $('<button type="button" class="btn btn-inline" data-toggle="modal">').dform('attr', options);
 		}, $.isFunction($.fn.button));
+
+	$.dform.addType('header',
+		/**
+		 * Set the title of the form
+		 */
+		function(options)
+		{
+			return $('<div class="box-header">').dform('attr', options);
+		});
+
+	$.dform.addType('owner',
+		/**
+		 * Set the logo of the form
+		 */
+		function(options)
+		{
+			return $('<div id="form-owner">').dform('attr', options);
+		});
+
+	$.dform.addType('title',
+		/**
+		 * Set the title of the form
+		 */
+		function(options)
+		{
+			return $('<h1 class="title">').dform('attr', options);
+		});
+
+	$.dform.addType('sub',
+		/**
+		 * Set the sub title of the form
+		 */
+		function(options)
+		{
+			return $('<p class="sub">').dform('attr', options);
+		});
+
+	$.dform.addType('text-inline',
+		/**
+		 * Set the logo of the form
+		 */
+		function(options)
+		{
+			return $('<div class="form-group"><label for="' + options.input_id + '">' + options.label + '</label><input type="text" id="' + options.input_id + '" class="form-control" placeholder="' + options.label + '"></div>').dform('attr', options);
+		});
 	
 	$.dform.subscribe("entries",
 		/**
